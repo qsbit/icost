@@ -17,7 +17,7 @@ class userService extends Service {
         // 有条件则按照条件查询
         return `select * from user where ${_id} ${_username}`;
       };
-      // mysql.query可以查多条
+      // mysql.query可以用来写自定义sql语句
       const result = await app.mysql.query(generateSql(params));
       return result;
     } catch (error) {
@@ -30,8 +30,9 @@ class userService extends Service {
   async getUserByUserName(username) {
     const { app } = this;
     try {
-      // mysql.select只能查一条数据
-      const result = await app.mysql.select('user', { username });
+      // mysql.select查多条数据，返回Array
+      // mysql.get用来查单条数据，返回Object
+      const result = await app.mysql.get('user', { username });
       return result;
     } catch (error) {
       console.log(error, 'getUserByUserName-error');
@@ -43,6 +44,7 @@ class userService extends Service {
   async register(params) {
     const { app } = this;
     try {
+      // 通过mysql.insert往数据库中插入数据
       const result = await app.mysql.insert('user', params);
       return result;
     } catch (error) {
