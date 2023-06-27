@@ -4,10 +4,21 @@ const { Service } = require('egg');
 
 class userService extends Service {
   // 查询用户信息列表
-  async userList() {
+  async userList(params) {
     const { app } = this;
     try {
-      const result = await app.mysql.select('user');
+      // 生成合适的sql语句
+      const generateSql = params => {
+        const { id, username } = params;
+        const _id = id ? `id=${id} and` : '';
+        const _username = username ? `username='${username}'` : '';
+        // 如果条件都没传，则全查
+        if (!_id && !_username) return 'select * from user';
+        // 有条件则按照条件查询
+        return `select * from user where ${_id} ${_username}`;
+      };
+      // mysql.query可以查多条
+      const result = await app.mysql.query(generateSql(params));
       return result;
     } catch (error) {
       console.log(error, 'userInfo-error');
@@ -15,10 +26,11 @@ class userService extends Service {
     }
   }
 
-  // 通过username查询用户信息
+  // 通过username查询单条用户信息
   async getUserByUserName(username) {
     const { app } = this;
     try {
+      // mysql.select只能查一条数据
       const result = await app.mysql.select('user', { username });
       return result;
     } catch (error) {

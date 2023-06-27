@@ -6,8 +6,8 @@ class userController extends Controller {
   // 默认页/获取用户列表
   async getUserList() {
     const { ctx } = this;
-
-    const result = await ctx.service.user.userList();
+    // const { id, username } = ctx.request.body;
+    const result = await ctx.service.user.userList(ctx.request.body);
     console.log(result);
     ctx.body = {
       code: 200,
