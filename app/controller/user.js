@@ -35,7 +35,7 @@ class userController extends Controller {
       password,
       signature: defaultSignature,
       avatar: defaultAvatar,
-      ctime: new Date(),
+      create_time: new Date(),
     });
     console.log(result, 'register-result');
 
@@ -87,6 +87,21 @@ class userController extends Controller {
       data: { token },
     };
 
+  }
+
+  // 测试
+  async test() {
+    const { ctx, app } = this;
+    const token = ctx.request.header.authorization;
+    const decode = app.jwt.verify(token, app.config.jwt.secret);
+
+    ctx.body = {
+      code: 200,
+      message: '成功',
+      data: {
+        ...decode,
+      },
+    };
   }
 }
 
