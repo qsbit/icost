@@ -3,6 +3,19 @@
 const { Controller } = require('egg');
 
 class userController extends Controller {
+  // 默认页/获取用户列表
+  async getUserList() {
+    const { ctx } = this;
+
+    const result = await ctx.service.user.userList();
+    console.log(result);
+    ctx.body = {
+      code: 200,
+      message: '查询成功',
+      data: result,
+    };
+  }
+
   // 注册用户
   async register() {
     const { ctx } = this;
@@ -17,7 +30,7 @@ class userController extends Controller {
       return;
     }
 
-    const userInfo = await ctx.service.user.getUserByUsername(username);
+    const userInfo = await ctx.service.user.getUserByUserName(username);
 
     if (userInfo && userInfo?.id) {
       ctx.body = {
