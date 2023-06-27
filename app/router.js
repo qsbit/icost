@@ -12,7 +12,9 @@ module.exports = app => {
   router.post('/delete_user', controller.home.deleteUser);
 
   const _jwt = middleware.jwtErr(app.config.jwt.secret);
-  router.post('/api/user/register', _jwt, controller.user.register);
-  router.post('/api/user/login', _jwt, controller.user.login);
-  router.post('/api/user/test', _jwt, controller.user.test);
+  router.post('/api/user/register', controller.user.register);
+  router.post('/api/user/login', controller.user.login);
+  router.get('/api/user/get_userinfo', _jwt, controller.user.getUserInfo);
+
+  router.get('/api/user/test', _jwt, controller.user.test);
 };

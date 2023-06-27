@@ -58,7 +58,7 @@ class userController extends Controller {
   async login() {
     const { ctx, app } = this;
     const { username, password } = ctx.request.body;
-    const userInfo = await ctx.service.user.getUserByUsername(username);
+    const userInfo = await ctx.service.user.getUserByUserName(username);
     if (!userInfo || !userInfo?.id) {
       ctx.body = {
         code: 500,
@@ -89,7 +89,7 @@ class userController extends Controller {
 
   }
 
-  // 测试
+  // 测试通过token解密拿值
   async test() {
     const { ctx, app } = this;
     const token = ctx.request.header.authorization;
@@ -100,6 +100,25 @@ class userController extends Controller {
       message: '成功',
       data: {
         ...decode,
+      },
+    };
+  }
+
+  // 获取用户信息
+  async getUserInfo() {
+    const { ctx } = this;
+    const defaultAvatar = 'https://d.17win.com/snack/177/pureCost/avatar.webp';
+    const userInfo = await ctx.service.user.getUserByUserName(ctx.decode.username);
+    const { id, username, signature, avatar, create_time } = userInfo;
+    ctx.body = {
+      code: 200,
+      msg: '获取用户信息成功',
+      data: {
+        id,
+        username,
+        signature: signature || '',
+        avatar: avatar || defaultAvatar,
+        create_time,
       },
     };
   }

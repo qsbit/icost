@@ -4,13 +4,13 @@ const { Service } = require('egg');
 
 class userService extends Service {
   // 通过username查询用户信息
-  async getUserByUsername(username) {
+  async getUserByUserName(username) {
     const { app } = this;
     try {
       const result = app.mysql.get('user', { username });
       return result;
     } catch (error) {
-      console.log(error, 'getUserByUsername-error');
+      console.log(error, 'getUserByUserName-error');
       return null;
     }
   }
@@ -27,15 +27,6 @@ class userService extends Service {
     }
   }
 
-  // 用户登录
-  // async login(params) {
-  //   const { app } = this;
-  //   try {
-  //     const result = await app.mysql
-  //   } catch (error) {
-
-  //   }
-  // }
 }
 
 module.exports = userService;
