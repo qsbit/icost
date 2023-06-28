@@ -4,7 +4,7 @@ const { Service } = require('egg');
 
 class userService extends Service {
   // 查询用户信息列表
-  async userList(params) {
+  async getUserList(params) {
     const { app } = this;
     try {
       // 生成合适的sql语句
@@ -18,6 +18,8 @@ class userService extends Service {
         return `select * from user where ${_id} ${_username}`;
       };
       // mysql.query可以用来写自定义sql语句
+      // mysql.select查多条数据，返回Array
+      // mysql.get用来查单条数据，返回Object
       const result = await app.mysql.query(generateSql(params));
       return result;
     } catch (error) {

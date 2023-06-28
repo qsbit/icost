@@ -6,9 +6,9 @@ class userController extends Controller {
   // 默认页/获取用户列表
   async getUserList() {
     const { ctx } = this;
-    // const { id, username } = ctx.request.body;
+    const { id, username } = ctx.request.body;
     // 直接将ctx.request.body中的params全部参数当做入参传入
-    const result = await ctx.service.user.userList(ctx.request.body);
+    const result = await ctx.service.user.getUserList({ id, username });
     console.log(result);
     // 处理返回参数
     ctx.body = {
