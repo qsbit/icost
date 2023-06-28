@@ -84,6 +84,7 @@ class userController extends Controller {
     const { username, password } = ctx.request.body;
     // 先通过username判断用户是否存在
     const userInfo = await ctx.service.user.getUserByUserName(username);
+    console.log('login-userInfo', userInfo);
     if (!userInfo || !userInfo?.id) {
       // 处理返回参数
       ctx.body = {
@@ -172,6 +173,7 @@ class userController extends Controller {
     try {
       // 通过token拿到用户的username，通过用户的username再去获取userInfo用户信息
       const userInfo = await ctx.service.user.getUserByUserName(ctx.decode.username);
+      console.log(userInfo, 'editUserInfo-userInfo');
       // 调用service层update数据的操作
       const result = await ctx.service.user.editUserInfo({
         // 将需要修改的值覆盖该token对应下的用户信息
@@ -179,11 +181,16 @@ class userController extends Controller {
         ...params,
         update_time: new Date(),
       });
+      console.log(result, 'editUserInfo-result');
       // 修改成功
       ctx.body = {
         code: 200,
         message: '修改成功。',
-        data: result,
+        data: {
+          id: ctx.decode.id,
+          username: ctx.decode.username,
+          ...params,
+        },
       };
     } catch (error) {
       ctx.body = {
