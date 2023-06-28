@@ -137,7 +137,7 @@ class userController extends Controller {
     const { ctx } = this;
     const defaultAvatar = 'https://d.17win.com/snack/177/pureCost/avatar.webp';
     // 通过用户名，在数据库中查询用户信息
-    const userInfo = await ctx.service.user.getUserByUserName(ctx.decode.username);
+    const userInfo = await ctx.service.user.getUserByUserName({ username: ctx.decode.username });
     const { id, username, signature, avatar, create_time } = userInfo;
     // 组装返回数据
     ctx.body = {

@@ -29,12 +29,12 @@ class userService extends Service {
   }
 
   // 通过username查询单条用户信息
-  async getUserByUserName(username) {
+  async getUserByUserName(params) {
     const { app } = this;
     try {
       // mysql.select查多条数据，返回Array
       // mysql.get用来查单条数据，返回Object
-      const result = await app.mysql.get('user', { username });
+      const result = await app.mysql.get('user', params);
       return result;
     } catch (error) {
       console.log(error, 'getUserByUserName-error');
