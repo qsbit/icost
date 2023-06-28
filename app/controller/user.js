@@ -57,6 +57,7 @@ class userController extends Controller {
       signature: defaultSignature,
       avatar: defaultAvatar,
       create_time: new Date(),
+      update_time: new Date(),
     });
     console.log(result, 'register-result');
     // 插入数据库成功
@@ -155,6 +156,7 @@ class userController extends Controller {
 
   // 修改用户信息
   async editUserInfo() {
+    // 注意📢：如果修改username或者password，则需要增加退出重新登录的逻辑
     const { ctx } = this;
     // 如果没有token值，则报错重新登陆
     if (!ctx.decode) {
@@ -175,6 +177,7 @@ class userController extends Controller {
         // 将需要修改的值覆盖该token对应下的用户信息
         ...userInfo,
         ...params,
+        update_time: new Date(),
       });
       // 修改成功
       ctx.body = {
