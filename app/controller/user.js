@@ -82,7 +82,7 @@ class userController extends Controller {
     const { ctx, app } = this;
     const { username, password } = ctx.request.body;
     // 先通过username判断用户是否存在
-    const userInfo = await ctx.service.user.getUserByUserName({ username });
+    const userInfo = await ctx.service.user.getUserByUserName(username);
     if (!userInfo || !userInfo?.id) {
       // 处理返回参数
       ctx.body = {
@@ -137,7 +137,7 @@ class userController extends Controller {
     const { ctx } = this;
     const defaultAvatar = 'https://d.17win.com/snack/177/pureCost/avatar.webp';
     // 通过用户名，在数据库中查询用户信息
-    const userInfo = await ctx.service.user.getUserByUserName({ username: ctx.decode.username });
+    const userInfo = await ctx.service.user.getUserByUserName(ctx.decode.username);
     const { id, username, signature, avatar, create_time } = userInfo;
     // 组装返回数据
     ctx.body = {
@@ -152,6 +152,45 @@ class userController extends Controller {
       },
     };
   }
+
+  // 修改用户信息
+  async editUserInfo() {
+    const { ctx } = this;
+    // 如果没有token值，则报错重新登陆
+    if (!ctx.decode) {
+      ctx.body = {
+        code: 405,
+        message: '未登录,请重新登陆。',
+        data: null,
+      };
+      return;
+    }
+    // 通过post请求获取需要修改的内容
+    const params = ctx.request.body;
+    try {
+      // 通过token拿到用户的username，通过用户的username再去获取userInfo用户信息
+      const userInfo = await ctx.service.user.getUserByUserName(ctx.decode.username);
+      // 调用service层update数据的操作
+      const result = await ctx.service.user.editUserInfo({
+        // 将需要修改的值覆盖该token对应下的用户信息
+        ...userInfo,
+        ...params,
+      });
+      // 修改成功
+      ctx.body = {
+        code: 200,
+        message: '修改成功。',
+        data: result,
+      };
+    } catch (error) {
+      ctx.body = {
+        code: 500,
+        message: '修改失败',
+        data: null,
+      };
+    }
+  }
+
 }
 
 module.exports = userController;

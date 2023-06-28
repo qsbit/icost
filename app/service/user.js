@@ -29,12 +29,12 @@ class userService extends Service {
   }
 
   // 通过username查询单条用户信息
-  async getUserByUserName(params) {
+  async getUserByUserName(username) {
     const { app } = this;
     try {
       // mysql.select查多条数据，返回Array
       // mysql.get用来查单条数据，返回Object
-      const result = await app.mysql.get('user', params);
+      const result = await app.mysql.get('user', { username });
       return result;
     } catch (error) {
       console.log(error, 'getUserByUserName-error');
@@ -52,6 +52,18 @@ class userService extends Service {
     } catch (error) {
       console.log(error, 'register-error');
       return null;
+    }
+  }
+
+  // 修改用户信息
+  async editUserInfo(params) {
+    const { app } = this;
+    try {
+      // 修改用update更新数据
+      const result = app.mysql.update('user', params);
+      return result;
+    } catch (error) {
+      console.log(error, 'editUserInfo-error');
     }
   }
 
