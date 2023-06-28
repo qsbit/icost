@@ -6,7 +6,10 @@
 module.exports = app => {
   const { router, controller, middleware } = app;
 
+  // 中间件-登录态校验
   const _jwt = middleware.jwtErr(app.config.jwt.secret);
+
+  // ------------用户部分----------------
   // 默认页，获取用户列表
   router.get('/', controller.user.getUserList);
   // 注册接口
@@ -17,6 +20,10 @@ module.exports = app => {
   router.get('/api/user/get_userinfo', _jwt, controller.user.getUserInfo);
   // 修改用户信息
   router.post('/api/user/edit_userinfo', _jwt, controller.user.editUserInfo);
-
+  // 测试通过token拿数据
   router.get('/api/user/test', _jwt, controller.user.test);
+
+  // ------------账单部分----------------
+  // 新增账单
+  router.post('/api/bill/add_bill', _jwt, controller.bill.addBill);
 };
