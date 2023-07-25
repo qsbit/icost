@@ -34,4 +34,6 @@ module.exports = app => {
   router.post('/api/bill/update', _jwt, controller.bill.update);
   // 删除某条账单
   router.post('/api/bill/delete', _jwt, controller.bill.delete);
+  // 根据月份查询登录用户的账单数据
+  router.get('/api/bill/get_data', _jwt, controller.bill.getData);
 };

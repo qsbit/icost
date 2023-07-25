@@ -43,7 +43,7 @@ class billService extends Service {
     }
   }
 
-  // 编辑账单信息
+  // 编辑账单信息（包括删除账单：逻辑删除）
   async update(params) {
     const { app } = this;
     try {

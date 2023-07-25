@@ -305,6 +305,93 @@ class billController extends Controller {
     }
   }
 
+  // 获取定制化数据格式（根据查询的月份时间筛选账单）
+  async getData() {
+    const { ctx } = this;
+
+    // 如果用户未登录，直接返回
+    if (!ctx.decode) {
+      ctx.body = {
+        code: 403,
+        message: '未登录！',
+        data: null,
+      };
+      return;
+    }
+
+    // 获取筛选的月份入参
+    const { date = '' } = ctx.query;
+
+    // 获取用户id
+    const { id: userId } = ctx.decode;
+
+    try {
+      // 获取账单用户下的账单列表
+      const list = await ctx.service.bill.list(userId);
+      // 根据时间参数，筛选出当月所有的账单数据
+      const start = moment(date).startOf('month').unix() * 1000; // 选择月份，月初时间
+      const end = moment(date).endOf('month').unix() * 1000; // 选择月份，月末时间
+      const _list = list?.filter(item => (Number(item.date) > start && Number(item.date) < end));
+
+      // 计算总支出
+      const total_expense = _list.reduce((arr, cur) => {
+        if (cur.pay_type === 1) {
+          arr += Number(cur.amount);
+        }
+        return arr;
+      }, 0);
+
+      // 计算总收入
+      const total_income = _list.reduce((arr, cur) => {
+        if (cur?.pay_type === 2) {
+          arr += Number(cur?.amount);
+        }
+        return arr;
+      }, 0);
+
+      // 获取收支构成
+      let total_data = _list.reduce((arr, cur) => {
+        const index = arr.findIndex(item => item.type_id === cur.type_id);
+        // 如果不存在该月的账单数据，则新增一条
+        if (index === -1) {
+          arr.push({
+            type_id: cur.type_id,
+            type_name: cur.type_name,
+            pay_type: cur.pay_type,
+            number: Number(cur.amount),
+          });
+        }
+        // 如果已存在当月该类型的账单数据，则进行类增
+        if (index > -1) {
+          arr[index].number += Number(cur.amount);
+        }
+        return arr;
+      }, []);
+
+      total_data = total_data.map(item => {
+        item.number = Number(Number(item.number).toFixed(2));
+        return item;
+      });
+
+      ctx.body = {
+        code: 200,
+        msg: '查询成功！',
+        data: {
+          total_data: total_data || [],
+          total_expense: Number(total_expense).toFixed(2),
+          total_income: Number(total_income).toFixed(2),
+        },
+      };
+
+    } catch (error) {
+      console.log('getData-error', error);
+      ctx.body = {
+        code: 500,
+        msg: '查询失败！',
+        data: null,
+      };
+    }
+  }
 
 }
 
